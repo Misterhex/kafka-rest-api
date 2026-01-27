@@ -44,16 +44,16 @@ class TopicIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void listTopics_shouldIncludeTestTopic() {
-        TopicDto[] topics = restTemplate.getForObject("/api/v1/topics", TopicDto[].class);
+        TopicResponse[] topics = restTemplate.getForObject("/api/v1/topics", TopicResponse[].class);
 
         assertThat(topics).isNotNull();
-        assertThat(topics).extracting(TopicDto::name).contains(TEST_TOPIC);
+        assertThat(topics).extracting(TopicResponse::name).contains(TEST_TOPIC);
     }
 
     @Test
     void getTopic_shouldReturnTopicDetails() {
-        TopicDetailDto topic = restTemplate.getForObject(
-                "/api/v1/topics/" + TEST_TOPIC, TopicDetailDto.class);
+        TopicDetailResponse topic = restTemplate.getForObject(
+                "/api/v1/topics/" + TEST_TOPIC, TopicDetailResponse.class);
 
         assertThat(topic).isNotNull();
         assertThat(topic.name()).isEqualTo(TEST_TOPIC);
@@ -63,12 +63,12 @@ class TopicIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getTopicPartitions_shouldReturnPartitionDetails() {
-        TopicPartitionInfoDto[] partitions = restTemplate.getForObject(
-                "/api/v1/topics/" + TEST_TOPIC + "/partitions", TopicPartitionInfoDto[].class);
+        TopicPartitionInfoResponse[] partitions = restTemplate.getForObject(
+                "/api/v1/topics/" + TEST_TOPIC + "/partitions", TopicPartitionInfoResponse[].class);
 
         assertThat(partitions).isNotNull();
         assertThat(partitions).hasSize(3);
-        assertThat(partitions).extracting(TopicPartitionInfoDto::partition)
+        assertThat(partitions).extracting(TopicPartitionInfoResponse::partition)
                 .containsExactly(0, 1, 2);
     }
 

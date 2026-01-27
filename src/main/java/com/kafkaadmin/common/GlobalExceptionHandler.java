@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+/**
+ * Global exception handler providing consistent error responses across all REST endpoints.
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 

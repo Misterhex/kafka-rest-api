@@ -13,6 +13,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST controller for Kafka cluster operations.
+ *
+ * <p>Provides endpoints for retrieving cluster information and broker details.
+ */
 @RestController
 @RequestMapping("/api/v1/cluster")
 @Tag(name = "Cluster", description = "Kafka cluster management operations")
@@ -20,10 +25,20 @@ public class ClusterController {
 
     private final ClusterService clusterService;
 
+    /**
+     * Creates a controller with the given service.
+     *
+     * @param clusterService the cluster service
+     */
     public ClusterController(ClusterService clusterService) {
         this.clusterService = clusterService;
     }
 
+    /**
+     * Retrieves cluster information.
+     *
+     * @return cluster information including controller and brokers
+     */
     @GetMapping
     @Operation(summary = "Get cluster info",
             description = "Returns information about the Kafka cluster including controller and brokers")
@@ -32,10 +47,15 @@ public class ClusterController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<ClusterInfoDto> getClusterInfo() {
+    public ResponseEntity<ClusterInfoResponse> getClusterInfo() {
         return ResponseEntity.ok(clusterService.getClusterInfo());
     }
 
+    /**
+     * Lists all brokers in the cluster.
+     *
+     * @return list of brokers sorted by ID
+     */
     @GetMapping("/brokers")
     @Operation(summary = "List all brokers", description = "Returns a list of all Kafka brokers in the cluster")
     @ApiResponses(value = {
@@ -43,10 +63,16 @@ public class ClusterController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<List<BrokerDto>> listBrokers() {
+    public ResponseEntity<List<BrokerResponse>> listBrokers() {
         return ResponseEntity.ok(clusterService.listBrokers());
     }
 
+    /**
+     * Retrieves details for a specific broker.
+     *
+     * @param id the broker ID
+     * @return broker details including configuration
+     */
     @GetMapping("/brokers/{id}")
     @Operation(summary = "Get broker details",
             description = "Returns detailed information about a specific broker including configuration")
@@ -57,7 +83,7 @@ public class ClusterController {
             @ApiResponse(responseCode = "500", description = "Internal server error",
                     content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
-    public ResponseEntity<BrokerDetailDto> getBroker(
+    public ResponseEntity<BrokerDetailResponse> getBroker(
             @Parameter(description = "Broker ID", required = true)
             @PathVariable int id) {
         return ResponseEntity.ok(clusterService.getBroker(id));

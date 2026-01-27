@@ -38,7 +38,7 @@ class TopicServiceTest {
         when(kafkaAdminPort.getTopic("alpha-topic")).thenReturn(topic2);
 
         // When
-        List<TopicDto> result = topicService.listTopics();
+        List<TopicResponse> result = topicService.listTopics();
 
         // Then
         assertThat(result).hasSize(2);
@@ -65,7 +65,7 @@ class TopicServiceTest {
         when(kafkaAdminPort.getTopic(topicName)).thenReturn(topic);
 
         // When
-        TopicDetailDto result = topicService.getTopic(topicName);
+        TopicDetailResponse result = topicService.getTopic(topicName);
 
         // Then
         assertThat(result.name()).isEqualTo(topicName);
@@ -100,7 +100,7 @@ class TopicServiceTest {
         when(kafkaAdminPort.getTopicPartitions(topicName)).thenReturn(partitions);
 
         // When
-        List<TopicPartitionInfoDto> result = topicService.getTopicPartitions(topicName);
+        List<TopicPartitionInfoResponse> result = topicService.getTopicPartitions(topicName);
 
         // Then
         assertThat(result).hasSize(3);

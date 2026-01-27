@@ -36,14 +36,14 @@ class ClusterControllerTest {
     @Test
     void getClusterInfo_shouldReturnClusterDetails() throws Exception {
         // Given
-        ClusterInfoDto clusterInfo = new ClusterInfoDto(
+        ClusterInfoResponse clusterInfo = new ClusterInfoResponse(
                 "test-cluster-id",
                 1,
                 3,
                 List.of(
-                        new BrokerDto(1, "broker-1", 9092, "rack-1", true),
-                        new BrokerDto(2, "broker-2", 9092, "rack-2", false),
-                        new BrokerDto(3, "broker-3", 9092, "rack-3", false)
+                        new BrokerResponse(1, "broker-1", 9092, "rack-1", true),
+                        new BrokerResponse(2, "broker-2", 9092, "rack-2", false),
+                        new BrokerResponse(3, "broker-3", 9092, "rack-3", false)
                 )
         );
         when(clusterService.getClusterInfo()).thenReturn(clusterInfo);
@@ -61,9 +61,9 @@ class ClusterControllerTest {
     @Test
     void listBrokers_shouldReturnBrokers() throws Exception {
         // Given
-        List<BrokerDto> brokers = List.of(
-                new BrokerDto(1, "broker-1", 9092, "rack-1", true),
-                new BrokerDto(2, "broker-2", 9092, "rack-2", false)
+        List<BrokerResponse> brokers = List.of(
+                new BrokerResponse(1, "broker-1", 9092, "rack-1", true),
+                new BrokerResponse(2, "broker-2", 9092, "rack-2", false)
         );
         when(clusterService.listBrokers()).thenReturn(brokers);
 
@@ -81,7 +81,7 @@ class ClusterControllerTest {
     @Test
     void getBroker_shouldReturnBrokerDetails() throws Exception {
         // Given
-        BrokerDetailDto broker = new BrokerDetailDto(
+        BrokerDetailResponse broker = new BrokerDetailResponse(
                 1,
                 "broker-1",
                 9092,

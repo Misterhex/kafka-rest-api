@@ -14,8 +14,8 @@ class ClusterIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getClusterInfo_shouldReturnClusterDetails() {
-        ClusterInfoDto clusterInfo = restTemplate.getForObject(
-                "/api/v1/cluster", ClusterInfoDto.class);
+        ClusterInfoResponse clusterInfo = restTemplate.getForObject(
+                "/api/v1/cluster", ClusterInfoResponse.class);
 
         assertThat(clusterInfo).isNotNull();
         assertThat(clusterInfo.clusterId()).isNotEmpty();
@@ -25,8 +25,8 @@ class ClusterIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void listBrokers_shouldReturnBrokers() {
-        BrokerDto[] brokers = restTemplate.getForObject(
-                "/api/v1/cluster/brokers", BrokerDto[].class);
+        BrokerResponse[] brokers = restTemplate.getForObject(
+                "/api/v1/cluster/brokers", BrokerResponse[].class);
 
         assertThat(brokers).isNotNull();
         assertThat(brokers).hasSizeGreaterThan(0);
@@ -37,14 +37,14 @@ class ClusterIntegrationTest extends BaseIntegrationTest {
     @Test
     void getBroker_shouldReturnBrokerDetails() {
         // First get the list of brokers to find a valid ID
-        BrokerDto[] brokers = restTemplate.getForObject(
-                "/api/v1/cluster/brokers", BrokerDto[].class);
+        BrokerResponse[] brokers = restTemplate.getForObject(
+                "/api/v1/cluster/brokers", BrokerResponse[].class);
         assertThat(brokers).isNotEmpty();
 
         int brokerId = brokers[0].id();
 
-        BrokerDetailDto broker = restTemplate.getForObject(
-                "/api/v1/cluster/brokers/" + brokerId, BrokerDetailDto.class);
+        BrokerDetailResponse broker = restTemplate.getForObject(
+                "/api/v1/cluster/brokers/" + brokerId, BrokerDetailResponse.class);
 
         assertThat(broker).isNotNull();
         assertThat(broker.id()).isEqualTo(brokerId);

@@ -2,8 +2,17 @@ package com.kafkaadmin.cluster;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
+/**
+ * Response representing broker summary for API responses.
+ *
+ * @param id broker identifier
+ * @param host broker hostname
+ * @param port broker port
+ * @param rack rack identifier
+ * @param isController whether this broker is the controller
+ */
 @Schema(description = "Broker information")
-public record BrokerDto(
+public record BrokerResponse(
         @Schema(description = "Broker ID", example = "1")
         int id,
 
@@ -19,8 +28,8 @@ public record BrokerDto(
         @Schema(description = "Whether this broker is the controller", example = "true")
         boolean isController
 ) {
-    public static BrokerDto from(Broker broker) {
-        return new BrokerDto(
+    public static BrokerResponse from(Broker broker) {
+        return new BrokerResponse(
                 broker.id(),
                 broker.host(),
                 broker.port(),

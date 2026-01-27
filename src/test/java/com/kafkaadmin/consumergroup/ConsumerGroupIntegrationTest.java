@@ -59,17 +59,17 @@ class ConsumerGroupIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void listConsumerGroups_shouldIncludeTestGroup() {
-        ConsumerGroupDto[] groups = restTemplate.getForObject(
-                "/api/v1/consumer-groups", ConsumerGroupDto[].class);
+        ConsumerGroupResponse[] groups = restTemplate.getForObject(
+                "/api/v1/consumer-groups", ConsumerGroupResponse[].class);
 
         assertThat(groups).isNotNull();
-        assertThat(groups).extracting(ConsumerGroupDto::groupId).contains(TEST_GROUP);
+        assertThat(groups).extracting(ConsumerGroupResponse::groupId).contains(TEST_GROUP);
     }
 
     @Test
     void getConsumerGroup_shouldReturnGroupDetails() {
-        ConsumerGroupDetailDto group = restTemplate.getForObject(
-                "/api/v1/consumer-groups/" + TEST_GROUP, ConsumerGroupDetailDto.class);
+        ConsumerGroupDetailResponse group = restTemplate.getForObject(
+                "/api/v1/consumer-groups/" + TEST_GROUP, ConsumerGroupDetailResponse.class);
 
         assertThat(group).isNotNull();
         assertThat(group.groupId()).isEqualTo(TEST_GROUP);
@@ -78,8 +78,8 @@ class ConsumerGroupIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getConsumerGroupOffsets_shouldReturnOffsets() {
-        ConsumerGroupOffsetDto[] offsets = restTemplate.getForObject(
-                "/api/v1/consumer-groups/" + TEST_GROUP + "/offsets", ConsumerGroupOffsetDto[].class);
+        ConsumerGroupOffsetResponse[] offsets = restTemplate.getForObject(
+                "/api/v1/consumer-groups/" + TEST_GROUP + "/offsets", ConsumerGroupOffsetResponse[].class);
 
         assertThat(offsets).isNotNull();
     }

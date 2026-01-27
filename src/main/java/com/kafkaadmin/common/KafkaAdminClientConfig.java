@@ -7,9 +7,18 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.Properties;
 
+/**
+ * Spring configuration for creating the Kafka AdminClient bean.
+ */
 @Configuration
 public class KafkaAdminClientConfig {
 
+    /**
+     * Creates an AdminClient configured with application properties.
+     *
+     * @param properties the Kafka admin configuration properties
+     * @return a configured AdminClient instance
+     */
     @Bean
     public AdminClient adminClient(KafkaAdminProperties properties) {
         Properties props = new Properties();

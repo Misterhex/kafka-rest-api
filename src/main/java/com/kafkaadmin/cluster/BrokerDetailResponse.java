@@ -4,8 +4,18 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.Map;
 
+/**
+ * Response representing broker details with configuration for API responses.
+ *
+ * @param id broker identifier
+ * @param host broker hostname
+ * @param port broker port
+ * @param rack rack identifier
+ * @param isController whether this broker is the controller
+ * @param configs non-default broker configuration key-value pairs
+ */
 @Schema(description = "Broker details with configuration")
-public record BrokerDetailDto(
+public record BrokerDetailResponse(
         @Schema(description = "Broker ID", example = "1")
         int id,
 
@@ -24,8 +34,8 @@ public record BrokerDetailDto(
         @Schema(description = "Non-default broker configuration")
         Map<String, String> configs
 ) {
-    public static BrokerDetailDto from(Broker broker, Map<String, String> configs) {
-        return new BrokerDetailDto(
+    public static BrokerDetailResponse from(Broker broker, Map<String, String> configs) {
+        return new BrokerDetailResponse(
                 broker.id(),
                 broker.host(),
                 broker.port(),

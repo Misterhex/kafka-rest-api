@@ -2,6 +2,16 @@ package com.kafkaadmin.common;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+/**
+ * Configuration properties for connecting to Kafka.
+ *
+ * <p>Properties are bound from the {@code kafka.admin} prefix in application configuration.
+ *
+ * @param bootstrapServers comma-separated list of Kafka broker addresses
+ * @param requestTimeoutMs timeout in milliseconds for individual requests
+ * @param defaultApiTimeoutMs default timeout in milliseconds for API calls
+ * @param clientId client identifier sent with requests
+ */
 @ConfigurationProperties(prefix = "kafka.admin")
 public record KafkaAdminProperties(
         String bootstrapServers,

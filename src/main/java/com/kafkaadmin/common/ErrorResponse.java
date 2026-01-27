@@ -4,6 +4,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
 
+/**
+ * Standard error response returned by API endpoints.
+ *
+ * @param status HTTP status code
+ * @param error error type description
+ * @param message detailed error message
+ * @param path request path that caused the error
+ * @param timestamp when the error occurred
+ */
 @Schema(description = "Error response")
 public record ErrorResponse(
         @Schema(description = "HTTP status code", example = "404")

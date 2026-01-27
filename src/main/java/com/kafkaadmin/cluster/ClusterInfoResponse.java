@@ -4,8 +4,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+/**
+ * Response representing cluster information for API responses.
+ *
+ * @param clusterId unique identifier for the cluster
+ * @param controllerId ID of the controller broker
+ * @param brokerCount number of brokers in the cluster
+ * @param brokers list of broker details
+ */
 @Schema(description = "Cluster information")
-public record ClusterInfoDto(
+public record ClusterInfoResponse(
         @Schema(description = "Cluster ID")
         String clusterId,
 
@@ -16,15 +24,15 @@ public record ClusterInfoDto(
         int brokerCount,
 
         @Schema(description = "List of brokers")
-        List<BrokerDto> brokers
+        List<BrokerResponse> brokers
 ) {
-    public static ClusterInfoDto from(ClusterInfo clusterInfo) {
-        return new ClusterInfoDto(
+    public static ClusterInfoResponse from(ClusterInfo clusterInfo) {
+        return new ClusterInfoResponse(
                 clusterInfo.clusterId(),
                 clusterInfo.controllerId(),
                 clusterInfo.brokers().size(),
                 clusterInfo.brokers().stream()
-                        .map(BrokerDto::from)
+                        .map(BrokerResponse::from)
                         .toList());
     }
 }

@@ -37,7 +37,7 @@ class ConsumerGroupServiceTest {
         when(kafkaAdminPort.getConsumerGroup("alpha-group")).thenReturn(group2);
 
         // When
-        List<ConsumerGroupDto> result = consumerGroupService.listConsumerGroups();
+        List<ConsumerGroupResponse> result = consumerGroupService.listConsumerGroups();
 
         // Then
         assertThat(result).hasSize(2);
@@ -64,7 +64,7 @@ class ConsumerGroupServiceTest {
         when(kafkaAdminPort.getConsumerGroup(groupId)).thenReturn(group);
 
         // When
-        ConsumerGroupDetailDto result = consumerGroupService.getConsumerGroup(groupId);
+        ConsumerGroupDetailResponse result = consumerGroupService.getConsumerGroup(groupId);
 
         // Then
         assertThat(result.groupId()).isEqualTo(groupId);
@@ -100,7 +100,7 @@ class ConsumerGroupServiceTest {
         when(kafkaAdminPort.getConsumerGroupOffsets(groupId)).thenReturn(offsets);
 
         // When
-        List<ConsumerGroupOffsetDto> result = consumerGroupService.getConsumerGroupOffsets(groupId);
+        List<ConsumerGroupOffsetResponse> result = consumerGroupService.getConsumerGroupOffsets(groupId);
 
         // Then
         assertThat(result).hasSize(3);

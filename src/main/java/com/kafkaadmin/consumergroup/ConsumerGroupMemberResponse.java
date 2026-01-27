@@ -4,8 +4,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+/**
+ * Response representing a consumer group member for API responses.
+ *
+ * @param consumerId unique consumer identifier
+ * @param clientId client identifier
+ * @param host consumer host address
+ * @param assignments list of assigned topic-partitions
+ */
 @Schema(description = "Consumer group member")
-public record ConsumerGroupMemberDto(
+public record ConsumerGroupMemberResponse(
         @Schema(description = "Consumer ID")
         String consumerId,
 
@@ -18,8 +26,8 @@ public record ConsumerGroupMemberDto(
         @Schema(description = "Assigned partitions")
         List<String> assignments
 ) {
-    public static ConsumerGroupMemberDto from(ConsumerGroupMember member) {
-        return new ConsumerGroupMemberDto(
+    public static ConsumerGroupMemberResponse from(ConsumerGroupMember member) {
+        return new ConsumerGroupMemberResponse(
                 member.consumerId(),
                 member.clientId(),
                 member.host(),

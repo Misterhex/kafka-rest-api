@@ -35,9 +35,9 @@ class ConsumerGroupControllerTest {
     @Test
     void listConsumerGroups_shouldReturnGroups() throws Exception {
         // Given
-        List<ConsumerGroupDto> groups = List.of(
-                new ConsumerGroupDto("group-1", "Stable", 2),
-                new ConsumerGroupDto("group-2", "Empty", 0)
+        List<ConsumerGroupResponse> groups = List.of(
+                new ConsumerGroupResponse("group-1", "Stable", 2),
+                new ConsumerGroupResponse("group-2", "Empty", 0)
         );
         when(consumerGroupService.listConsumerGroups()).thenReturn(groups);
 
@@ -55,13 +55,13 @@ class ConsumerGroupControllerTest {
     @Test
     void getConsumerGroup_shouldReturnGroupDetails() throws Exception {
         // Given
-        ConsumerGroupDetailDto group = new ConsumerGroupDetailDto(
+        ConsumerGroupDetailResponse group = new ConsumerGroupDetailResponse(
                 "my-group",
                 "Stable",
                 "range",
                 1,
                 List.of(
-                        new ConsumerGroupMemberDto("consumer-1-id", "consumer-1", "/192.168.1.100",
+                        new ConsumerGroupMemberResponse("consumer-1-id", "consumer-1", "/192.168.1.100",
                                 List.of("topic-0"))
                 )
         );
@@ -95,9 +95,9 @@ class ConsumerGroupControllerTest {
     @Test
     void getConsumerGroupOffsets_shouldReturnOffsets() throws Exception {
         // Given
-        List<ConsumerGroupOffsetDto> offsets = List.of(
-                new ConsumerGroupOffsetDto("topic-1", 0, 100, 150, 50),
-                new ConsumerGroupOffsetDto("topic-1", 1, 200, 250, 50)
+        List<ConsumerGroupOffsetResponse> offsets = List.of(
+                new ConsumerGroupOffsetResponse("topic-1", 0, 100, 150, 50),
+                new ConsumerGroupOffsetResponse("topic-1", 1, 200, 250, 50)
         );
         when(consumerGroupService.getConsumerGroupOffsets("my-group")).thenReturn(offsets);
 

@@ -23,17 +23,29 @@ import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
+/**
+ * Adapter implementing {@link KafkaAdminPort} using Kafka's AdminClient.
+ *
+ * <p>Translates Kafka AdminClient operations into domain model objects
+ * and handles exceptions appropriately.
+ */
 @Component
-public class KafkaAdminClientAdapter implements KafkaAdminPort {
+class KafkaAdminClientAdapter implements KafkaAdminPort {
 
     private static final Logger log = LoggerFactory.getLogger(KafkaAdminClientAdapter.class);
 
     private final AdminClient adminClient;
 
-    public KafkaAdminClientAdapter(AdminClient adminClient) {
+    /**
+     * Creates an adapter with the given AdminClient.
+     *
+     * @param adminClient the Kafka AdminClient to use
+     */
+    KafkaAdminClientAdapter(AdminClient adminClient) {
         this.adminClient = adminClient;
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> listTopicNames() {
         try {
@@ -46,6 +58,7 @@ public class KafkaAdminClientAdapter implements KafkaAdminPort {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public Topic getTopic(String topicName) {
         try {
@@ -102,12 +115,14 @@ public class KafkaAdminClientAdapter implements KafkaAdminPort {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<TopicPartitionInfo> getTopicPartitions(String topicName) {
         Topic topic = getTopic(topicName);
         return topic.partitions();
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<String> listConsumerGroupIds() {
         try {
@@ -122,6 +137,7 @@ public class KafkaAdminClientAdapter implements KafkaAdminPort {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public ConsumerGroup getConsumerGroup(String groupId) {
         try {
@@ -156,6 +172,7 @@ public class KafkaAdminClientAdapter implements KafkaAdminPort {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<ConsumerGroupOffset> getConsumerGroupOffsets(String groupId) {
         try {
@@ -203,6 +220,7 @@ public class KafkaAdminClientAdapter implements KafkaAdminPort {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public ClusterInfo getClusterInfo() {
         try {
@@ -233,11 +251,13 @@ public class KafkaAdminClientAdapter implements KafkaAdminPort {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public List<Broker> listBrokers() {
         return getClusterInfo().brokers();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Broker getBroker(int brokerId) {
         return listBrokers().stream()
@@ -246,6 +266,7 @@ public class KafkaAdminClientAdapter implements KafkaAdminPort {
                 .orElseThrow(() -> new BrokerNotFoundException(brokerId));
     }
 
+    /** {@inheritDoc} */
     @Override
     public Map<String, String> getBrokerConfigs(int brokerId) {
         // First verify broker exists

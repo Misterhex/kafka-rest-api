@@ -41,7 +41,7 @@ class ClusterServiceTest {
         when(kafkaAdminPort.getClusterInfo()).thenReturn(clusterInfo);
 
         // When
-        ClusterInfoDto result = clusterService.getClusterInfo();
+        ClusterInfoResponse result = clusterService.getClusterInfo();
 
         // Then
         assertThat(result.clusterId()).isEqualTo("test-cluster-id");
@@ -62,7 +62,7 @@ class ClusterServiceTest {
         when(kafkaAdminPort.listBrokers()).thenReturn(brokers);
 
         // When
-        List<BrokerDto> result = clusterService.listBrokers();
+        List<BrokerResponse> result = clusterService.listBrokers();
 
         // Then
         assertThat(result).hasSize(3);
@@ -85,7 +85,7 @@ class ClusterServiceTest {
         when(kafkaAdminPort.getBrokerConfigs(brokerId)).thenReturn(configs);
 
         // When
-        BrokerDetailDto result = clusterService.getBroker(brokerId);
+        BrokerDetailResponse result = clusterService.getBroker(brokerId);
 
         // Then
         assertThat(result.id()).isEqualTo(brokerId);

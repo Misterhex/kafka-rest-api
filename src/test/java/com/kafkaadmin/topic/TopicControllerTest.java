@@ -36,9 +36,9 @@ class TopicControllerTest {
     @Test
     void listTopics_shouldReturnTopics() throws Exception {
         // Given
-        List<TopicDto> topics = List.of(
-                new TopicDto("topic-1", 3, 2, false),
-                new TopicDto("topic-2", 1, 1, false)
+        List<TopicResponse> topics = List.of(
+                new TopicResponse("topic-1", 3, 2, false),
+                new TopicResponse("topic-2", 1, 1, false)
         );
         when(topicService.listTopics()).thenReturn(topics);
 
@@ -56,15 +56,15 @@ class TopicControllerTest {
     @Test
     void getTopic_shouldReturnTopicDetails() throws Exception {
         // Given
-        TopicDetailDto topic = new TopicDetailDto(
+        TopicDetailResponse topic = new TopicDetailResponse(
                 "my-topic",
                 3,
                 2,
                 false,
                 Map.of("retention.ms", "86400000"),
                 List.of(
-                        new TopicPartitionInfoDto(0, 1, List.of(1, 2), List.of(1, 2)),
-                        new TopicPartitionInfoDto(1, 2, List.of(2, 1), List.of(2, 1))
+                        new TopicPartitionInfoResponse(0, 1, List.of(1, 2), List.of(1, 2)),
+                        new TopicPartitionInfoResponse(1, 2, List.of(2, 1), List.of(2, 1))
                 )
         );
         when(topicService.getTopic("my-topic")).thenReturn(topic);
@@ -98,9 +98,9 @@ class TopicControllerTest {
     @Test
     void getTopicPartitions_shouldReturnPartitions() throws Exception {
         // Given
-        List<TopicPartitionInfoDto> partitions = List.of(
-                new TopicPartitionInfoDto(0, 1, List.of(1, 2), List.of(1, 2)),
-                new TopicPartitionInfoDto(1, 2, List.of(2, 1), List.of(2, 1))
+        List<TopicPartitionInfoResponse> partitions = List.of(
+                new TopicPartitionInfoResponse(0, 1, List.of(1, 2), List.of(1, 2)),
+                new TopicPartitionInfoResponse(1, 2, List.of(2, 1), List.of(2, 1))
         );
         when(topicService.getTopicPartitions("my-topic")).thenReturn(partitions);
 

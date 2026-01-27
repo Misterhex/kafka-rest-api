@@ -6,32 +6,59 @@ import org.springframework.stereotype.Service;
 import java.util.Comparator;
 import java.util.List;
 
+/**
+ * Service providing topic management operations.
+ */
 @Service
 public class TopicService {
 
     private final KafkaAdminPort kafkaAdminPort;
 
+    /**
+     * Creates a service with the given Kafka admin port.
+     *
+     * @param kafkaAdminPort the Kafka admin port
+     */
     public TopicService(KafkaAdminPort kafkaAdminPort) {
         this.kafkaAdminPort = kafkaAdminPort;
     }
 
-    public List<TopicDto> listTopics() {
+    /**
+     * Lists all topics.
+     *
+     * @return list of topic DTOs sorted by name
+     */
+    public List<TopicResponse> listTopics() {
         return kafkaAdminPort.listTopicNames().stream()
                 .map(kafkaAdminPort::getTopic)
-                .map(TopicDto::from)
-                .sorted(Comparator.comparing(TopicDto::name))
+                .map(TopicResponse::from)
+                .sorted(Comparator.comparing(TopicResponse::name))
                 .toList();
     }
 
-    public TopicDetailDto getTopic(String topicName) {
+    /**
+     * Retrieves details for a specific topic.
+     *
+     * @param topicName the topic name
+     * @return topic detail DTO
+     * @throws TopicNotFoundException if the topic does not exist
+     */
+    public TopicDetailResponse getTopic(String topicName) {
         Topic topic = kafkaAdminPort.getTopic(topicName);
-        return TopicDetailDto.from(topic);
+        return TopicDetailResponse.from(topic);
     }
 
-    public List<TopicPartitionInfoDto> getTopicPartitions(String topicName) {
+    /**
+     * Retrieves partition information for a topic.
+     *
+     * @param topicName the topic name
+     * @return list of partition info DTOs sorted by partition number
+     * @throws TopicNotFoundException if the topic does not exist
+     */
+    public List<TopicPartitionInfoResponse> getTopicPartitions(String topicName) {
         return kafkaAdminPort.getTopicPartitions(topicName).stream()
-                .map(TopicPartitionInfoDto::from)
-                .sorted(Comparator.comparingInt(TopicPartitionInfoDto::partition))
+                .map(TopicPartitionInfoResponse::from)
+                .sorted(Comparator.comparingInt(TopicPartitionInfoResponse::partition))
                 .toList();
     }
 }

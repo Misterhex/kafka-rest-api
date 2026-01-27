@@ -4,8 +4,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+/**
+ * Response representing partition information for API responses.
+ *
+ * @param partition partition number
+ * @param leader ID of the leader broker
+ * @param replicas IDs of all replica brokers
+ * @param isr IDs of in-sync replica brokers
+ */
 @Schema(description = "Partition information")
-public record TopicPartitionInfoDto(
+public record TopicPartitionInfoResponse(
         @Schema(description = "Partition number", example = "0")
         int partition,
 
@@ -18,8 +26,8 @@ public record TopicPartitionInfoDto(
         @Schema(description = "In-sync replica broker IDs")
         List<Integer> isr
 ) {
-    public static TopicPartitionInfoDto from(TopicPartitionInfo info) {
-        return new TopicPartitionInfoDto(
+    public static TopicPartitionInfoResponse from(TopicPartitionInfo info) {
+        return new TopicPartitionInfoResponse(
                 info.partition(),
                 info.leader(),
                 info.replicas(),
