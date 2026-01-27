@@ -48,10 +48,16 @@ tasks.register('integrationTest', Test) {
     useJUnitPlatform {
         includeTags 'integration'
     }
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
 }
 
 test {
     useJUnitPlatform {
         excludeTags 'integration'
+    }
+    testLogging {
+        events "passed", "skipped", "failed"
     }
 }
