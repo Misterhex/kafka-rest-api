@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: kafka-admin-api
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: 8080
+
+kafka:
+  admin:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    request-timeout-ms: 30000
+    default-api-timeout-ms: 60000
+    client-id: kafka-admin-api
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus,metrics
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    tags:
+      application: ${spring.application.name}
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operationsSorter: method
+
+logging:
+  level:
+    com.kafkaadmin: INFO
+    org.apache.kafka: WARN

@@ -1,0 +1,8 @@
+kafka:
+  admin:
+    bootstrap-servers: localhost:9092
+
+logging:
+  level:
+    com.kafkaadmin: DEBUG
+    org.apache.kafka: INFO
