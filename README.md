@@ -1,5 +1,7 @@
 # Kafka Admin REST API
 
+![Build status](https://github.com/misterhex/kafka-admin-api/actions/workflows/ci.yml/badge.svg)
+
 A REST API for Kafka cluster administration, providing read-only operations to inspect topics, consumer groups, and cluster metadata.
 
 ## Tech Stack
