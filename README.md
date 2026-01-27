@@ -114,10 +114,7 @@ src/main/java/com/kafkaadmin/
 **Option 1: Using Docker Compose (recommended)**
 
 ```bash
-# Build the application JAR
-./gradlew build
-
-# Start Kafka and the API
+# Start Kafka and the API (builds automatically)
 docker-compose up -d
 
 # API available at http://localhost:8080
