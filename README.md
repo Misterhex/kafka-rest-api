@@ -49,6 +49,13 @@ This API currently supports **read-only operations** for inspecting Kafka cluste
 | GET | `/api/v1/cluster/features` | List Kafka features |
 | GET | `/api/v1/cluster/quorum` | Get metadata quorum info (KRaft) |
 
+### Share Groups (`/api/v1/share-groups`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/share-groups` | List all share groups |
+| GET | `/api/v1/share-groups/{groupId}` | Get share group details |
+
 ### ACLs (`/api/v1/acls`)
 
 | Method | Path | Description |
@@ -151,6 +158,15 @@ src/main/java/com/kafkaadmin/
 │   ├── ClusterService.java            # Business logic
 │   ├── ClusterController.java         # REST controller
 │   └── BrokerNotFoundException.java   # Exception
+├── sharegroup/                           # Share group feature
+│   ├── ShareGroup.java                 # Domain model
+│   ├── ShareGroupMember.java           # Member model
+│   ├── ShareGroupResponse.java         # List response DTO
+│   ├── ShareGroupDetailResponse.java   # Detail response DTO
+│   ├── ShareGroupMemberResponse.java   # Member DTO
+│   ├── ShareGroupService.java          # Business logic
+│   ├── ShareGroupController.java       # REST controller
+│   └── ShareGroupNotFoundException.java # Exception
 ├── acl/                                 # ACL feature
 │   ├── Acl.java                       # Domain model
 │   ├── AclResponse.java              # Response DTO

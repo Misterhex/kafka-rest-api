@@ -12,6 +12,9 @@ import com.kafkaadmin.consumergroup.ConsumerGroupMember;
 import com.kafkaadmin.consumergroup.ConsumerGroupNotFoundException;
 import com.kafkaadmin.consumergroup.ConsumerGroupOffset;
 import com.kafkaadmin.quota.ClientQuota;
+import com.kafkaadmin.sharegroup.ShareGroup;
+import com.kafkaadmin.sharegroup.ShareGroupMember;
+import com.kafkaadmin.sharegroup.ShareGroupNotFoundException;
 import com.kafkaadmin.token.DelegationToken;
 import com.kafkaadmin.topic.ProducerState;
 import com.kafkaadmin.topic.ReplicaLogDirInfo;
@@ -656,6 +659,57 @@ class KafkaAdminClientAdapter implements KafkaAdminPort {
             throw new KafkaAdminException("Interrupted while describing delegation tokens", e);
         } catch (ExecutionException e) {
             throw new KafkaAdminException("Failed to describe delegation tokens", e.getCause());
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public List<String> listShareGroupIds() {
+        try {
+            ListGroupsOptions options = new ListGroupsOptions()
+                    .withTypes(Set.of(org.apache.kafka.common.GroupType.SHARE));
+            return adminClient.listGroups(options).all().get().stream()
+                    .map(GroupListing::groupId)
+                    .toList();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new KafkaAdminException("Interrupted while listing share groups", e);
+        } catch (ExecutionException e) {
+            throw new KafkaAdminException("Failed to list share groups", e.getCause());
+        }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public ShareGroup describeShareGroup(String groupId) {
+        try {
+            DescribeShareGroupsResult result = adminClient.describeShareGroups(List.of(groupId));
+            ShareGroupDescription description = result.describedGroups().get(groupId).get();
+
+            List<ShareGroupMember> members = description.members().stream()
+                    .map(m -> new ShareGroupMember(
+                            m.consumerId(),
+                            m.clientId(),
+                            m.host(),
+                            m.assignment().topicPartitions().stream()
+                                    .map(tp -> tp.topic() + "-" + tp.partition())
+                                    .toList()))
+                    .toList();
+
+            return new ShareGroup(
+                    groupId,
+                    description.groupState().toString(),
+                    description.coordinator() != null ? description.coordinator().id() : -1,
+                    members);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new KafkaAdminException("Interrupted while describing share group: " + groupId, e);
+        } catch (ExecutionException e) {
+            if (e.getCause() instanceof org.apache.kafka.common.errors.GroupIdNotFoundException) {
+                throw new ShareGroupNotFoundException(groupId);
+            }
+            throw new KafkaAdminException("Failed to describe share group: " + groupId, e.getCause());
         }
     }
 

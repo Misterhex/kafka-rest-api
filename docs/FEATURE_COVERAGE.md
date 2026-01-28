@@ -13,7 +13,7 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 |----------|---------------------|------------------|--------------------------|
 | Topics | 3/3 | 0 | 3 |
 | Consumer Groups | 3/3 | 0 | 4 |
-| Share Groups (4.0+) | 0/1 | 1 | 0 |
+| Share Groups (4.0+) | 1/1 | 0 | 0 |
 | Cluster/Brokers | 4/4 | 0 | 1 |
 | KRaft (4.0+) | 1/1 | 0 | 2 |
 | ACLs | 1/1 | 0 | 2 |
@@ -23,7 +23,7 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 | Delegation Tokens | 1/1 | 0 | 3 |
 | User Credentials | 1/1 | 0 | 1 |
 | Features/Metadata | 1/1 | 0 | 1 |
-| **Total** | **20/21 (95%)** | **1** | **22** |
+| **Total** | **21/21 (100%)** | **0** | **22** |
 
 ---
 
@@ -56,7 +56,7 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeShareGroups` | :x: | - | Pending Kafka client support |
+| `describeShareGroups` | :white_check_mark: | `GET /api/v1/share-groups/{groupId}` | Share group details with members |
 
 ### Cluster & Brokers
 
@@ -143,9 +143,7 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 ## Missing Read Operations (Backlog)
 
-| Feature | AdminClient Method | Suggested Endpoint | Notes |
-|---------|-------------------|-------------------|-------|
-| Share Groups | `describeShareGroups` | `GET /api/v1/share-groups` | Kafka 4.0+ feature, pending Kafka client support |
+All read operations are implemented. No missing read operations.
 
 ---
 

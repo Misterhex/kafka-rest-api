@@ -1,6 +1,7 @@
 package com.kafkaadmin.common;
 
 import com.kafkaadmin.consumergroup.ConsumerGroupNotFoundException;
+import com.kafkaadmin.sharegroup.ShareGroupNotFoundException;
 import com.kafkaadmin.topic.TopicNotFoundException;
 import com.kafkaadmin.transaction.TransactionNotFoundException;
 import com.kafkaadmin.cluster.BrokerNotFoundException;
@@ -60,6 +61,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleTransactionNotFound(
             TransactionNotFoundException ex, HttpServletRequest request) {
         log.warn("Transaction not found: {}", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.of(
+                        HttpStatus.NOT_FOUND.value(),
+                        "Not Found",
+                        ex.getMessage(),
+                        request.getRequestURI()));
+    }
+
+    @ExceptionHandler(ShareGroupNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleShareGroupNotFound(
+            ShareGroupNotFoundException ex, HttpServletRequest request) {
+        log.warn("Share group not found: {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(ErrorResponse.of(
                         HttpStatus.NOT_FOUND.value(),

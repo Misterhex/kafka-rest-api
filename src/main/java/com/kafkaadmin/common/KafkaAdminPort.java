@@ -5,6 +5,7 @@ import com.kafkaadmin.cluster.*;
 import com.kafkaadmin.consumergroup.ConsumerGroup;
 import com.kafkaadmin.consumergroup.ConsumerGroupOffset;
 import com.kafkaadmin.quota.ClientQuota;
+import com.kafkaadmin.sharegroup.ShareGroup;
 import com.kafkaadmin.token.DelegationToken;
 import com.kafkaadmin.topic.ProducerState;
 import com.kafkaadmin.topic.ReplicaLogDirInfo;
@@ -227,6 +228,26 @@ public interface KafkaAdminPort {
      * @throws KafkaAdminException if communication with Kafka fails
      */
     List<DelegationToken> describeDelegationTokens();
+
+    // Share group operations
+
+    /**
+     * Lists all share group IDs in the Kafka cluster.
+     *
+     * @return list of share group IDs
+     * @throws KafkaAdminException if communication with Kafka fails
+     */
+    List<String> listShareGroupIds();
+
+    /**
+     * Retrieves detailed information about a share group.
+     *
+     * @param groupId the share group ID
+     * @return share group details including members
+     * @throws com.kafkaadmin.sharegroup.ShareGroupNotFoundException if the group does not exist
+     * @throws KafkaAdminException if communication with Kafka fails
+     */
+    ShareGroup describeShareGroup(String groupId);
 
     // User SCRAM credential operations
 
