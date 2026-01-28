@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'org.springframework.boot' version '4.0.1'
     id 'io.spring.dependency-management' version '1.1.7'
 }
@@ -33,31 +34,24 @@ dependencies {
 
     // Testing
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'org.testcontainers:testcontainers:2.0.2'
-    testImplementation 'org.testcontainers:testcontainers-junit-jupiter:2.0.2'
-    testImplementation 'org.testcontainers:testcontainers-kafka:2.0.2'
 }
 
 tasks.withType(Test) {
     useJUnitPlatform()
 }
 
-tasks.register('integrationTest', Test) {
-    description = 'Runs integration tests.'
-    group = 'verification'
-    useJUnitPlatform {
-        includeTags 'integration'
-    }
+test {
+    useJUnitPlatform()
     testLogging {
         events "passed", "skipped", "failed"
     }
+    finalizedBy jacocoTestReport
 }
 
-test {
-    useJUnitPlatform {
-        excludeTags 'integration'
-    }
-    testLogging {
-        events "passed", "skipped", "failed"
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = true
+        html.required = true
     }
 }

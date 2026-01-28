@@ -2,7 +2,7 @@
 
 This document tracks feature parity between Kafka's AdminClient API and this REST API.
 
-**Last Updated:** 2026-01-28
+**Last Updated:** 2026-01-29
 **Kafka Version Reference:** 4.x
 
 ---
@@ -14,16 +14,16 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 | Topics | 3/3 | 0 | 3 |
 | Consumer Groups | 3/3 | 0 | 4 |
 | Share Groups (4.0+) | 0/1 | 1 | 0 |
-| Cluster/Brokers | 2/4 | 2 | 1 |
-| KRaft Management (4.0+) | 0/1 | 1 | 2 |
-| ACLs | 0/1 | 1 | 2 |
-| Quotas | 0/1 | 1 | 1 |
-| Partitions/Replication | 0/1 | 1 | 2 |
-| Transactions | 0/3 | 3 | 2 |
-| Delegation Tokens | 0/1 | 1 | 3 |
-| User Credentials | 0/1 | 1 | 1 |
-| Features/Metadata | 0/2 | 2 | 1 |
-| **Total** | **8/22 (36%)** | **14** | **22** |
+| Cluster/Brokers | 4/4 | 0 | 1 |
+| KRaft (4.0+) | 1/1 | 0 | 2 |
+| ACLs | 1/1 | 0 | 2 |
+| Quotas | 1/1 | 0 | 1 |
+| Partitions/Replication | 1/1 | 0 | 2 |
+| Transactions | 3/3 | 0 | 2 |
+| Delegation Tokens | 1/1 | 0 | 3 |
+| User Credentials | 1/1 | 0 | 1 |
+| Features/Metadata | 1/1 | 0 | 1 |
+| **Total** | **20/21 (95%)** | **1** | **22** |
 
 ---
 
@@ -56,7 +56,7 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeShareGroups` | :x: | - | **TODO**: New in Kafka 4.0 |
+| `describeShareGroups` | :x: | - | Pending Kafka client support |
 
 ### Cluster & Brokers
 
@@ -64,15 +64,15 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 |-------------------|-------------|--------------|-------|
 | `describeCluster` | :white_check_mark: | `GET /api/v1/cluster` | Cluster ID, controller, brokers |
 | `describeConfigs` (broker) | :white_check_mark: | `GET /api/v1/cluster/brokers/{id}` | Non-default, non-sensitive |
-| `describeLogDirs` | :x: | - | **TODO**: Disk usage per broker/topic |
-| `describeReplicaLogDirs` | :x: | - | **TODO**: Replica log directory info |
+| `describeLogDirs` | :white_check_mark: | `GET /api/v1/cluster/brokers/{id}/log-dirs` | Disk usage per broker |
+| `describeReplicaLogDirs` | :white_check_mark: | `GET /api/v1/topics/{name}/replicas/log-dirs` | Replica log directory info |
 | `unregisterBroker` | :x: | - | Write operation |
 
 ### KRaft Management (Kafka 4.0+)
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeMetadataQuorum` | :x: | - | **TODO**: KRaft quorum status |
+| `describeMetadataQuorum` | :white_check_mark: | `GET /api/v1/cluster/quorum` | KRaft quorum status |
 | `addRaftVoter` | :x: | - | Write operation |
 | `removeRaftVoter` | :x: | - | Write operation |
 
@@ -87,7 +87,7 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeAcls` | :x: | - | **TODO**: Security/authorization visibility |
+| `describeAcls` | :white_check_mark: | `GET /api/v1/acls` | Security/authorization visibility |
 | `createAcls` | :x: | - | Write operation |
 | `deleteAcls` | :x: | - | Write operation |
 
@@ -95,14 +95,14 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeClientQuotas` | :x: | - | **TODO**: Rate limiting visibility |
+| `describeClientQuotas` | :white_check_mark: | `GET /api/v1/quotas` | Rate limiting visibility |
 | `alterClientQuotas` | :x: | - | Write operation |
 
 ### Partitions & Replication
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `listPartitionReassignments` | :x: | - | **TODO**: In-progress reassignments |
+| `listPartitionReassignments` | :white_check_mark: | `GET /api/v1/cluster/reassignments` | In-progress reassignments |
 | `alterPartitionReassignments` | :x: | - | Write operation |
 | `electLeaders` | :x: | - | Write operation |
 
@@ -110,9 +110,9 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `listTransactions` | :x: | - | **TODO**: List active transactions |
-| `describeTransactions` | :x: | - | **TODO**: Transaction details |
-| `describeProducers` | :x: | - | **TODO**: Producer state per partition |
+| `listTransactions` | :white_check_mark: | `GET /api/v1/transactions` | List active transactions |
+| `describeTransactions` | :white_check_mark: | `GET /api/v1/transactions/{transactionalId}` | Transaction details |
+| `describeProducers` | :white_check_mark: | `GET /api/v1/topics/{name}/partitions/{partition}/producers` | Producer state per partition |
 | `abortTransaction` | :x: | - | Write operation |
 | `fenceProducers` | :x: | - | Write operation |
 
@@ -120,7 +120,7 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeDelegationToken` | :x: | - | **TODO**: Token management visibility |
+| `describeDelegationToken` | :white_check_mark: | `GET /api/v1/tokens` | Token management visibility |
 | `createDelegationToken` | :x: | - | Write operation |
 | `renewDelegationToken` | :x: | - | Write operation |
 | `expireDelegationToken` | :x: | - | Write operation |
@@ -129,46 +129,23 @@ This document tracks feature parity between Kafka's AdminClient API and this RES
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeUserScramCredentials` | :x: | - | **TODO**: User credential info |
+| `describeUserScramCredentials` | :white_check_mark: | `GET /api/v1/users/credentials` | User credential info |
 | `alterUserScramCredentials` | :x: | - | Write operation |
 
 ### Features & Metadata
 
 | AdminClient Method | Implemented | API Endpoint | Notes |
 |-------------------|-------------|--------------|-------|
-| `describeFeatures` | :x: | - | **TODO**: Cluster feature flags |
+| `describeFeatures` | :white_check_mark: | `GET /api/v1/cluster/features` | Cluster feature flags |
 | `updateFeatures` | :x: | - | Write operation |
 
 ---
 
 ## Missing Read Operations (Backlog)
 
-Prioritized list of read operations to implement:
-
-### High Priority
-| Feature | AdminClient Method | Suggested Endpoint | Use Case |
-|---------|-------------------|-------------------|----------|
-| Log Dirs | `describeLogDirs` | `GET /api/v1/cluster/brokers/{id}/log-dirs` | Disk usage monitoring |
-| Partition Reassignments | `listPartitionReassignments` | `GET /api/v1/partitions/reassignments` | Rebalance monitoring |
-
-### Medium Priority
-| Feature | AdminClient Method | Suggested Endpoint | Use Case |
-|---------|-------------------|-------------------|----------|
-| ACLs | `describeAcls` | `GET /api/v1/acls` | Security audit |
-| Transactions | `listTransactions` | `GET /api/v1/transactions` | Transaction monitoring |
-| Transaction Details | `describeTransactions` | `GET /api/v1/transactions/{id}` | Debugging stuck transactions |
-| Client Quotas | `describeClientQuotas` | `GET /api/v1/quotas` | Rate limit visibility |
-
-### Low Priority
-| Feature | AdminClient Method | Suggested Endpoint | Use Case |
-|---------|-------------------|-------------------|----------|
-| Features | `describeFeatures` | `GET /api/v1/cluster/features` | Version compatibility |
-| Metadata Quorum | `describeMetadataQuorum` | `GET /api/v1/cluster/quorum` | KRaft health |
-| Share Groups | `describeShareGroups` | `GET /api/v1/share-groups` | Kafka 4.0 share groups |
-| Producers | `describeProducers` | `GET /api/v1/topics/{name}/producers` | Producer debugging |
-| Delegation Tokens | `describeDelegationToken` | `GET /api/v1/tokens` | Token audit |
-| SCRAM Credentials | `describeUserScramCredentials` | `GET /api/v1/users/{user}/credentials` | User management |
-| Replica Log Dirs | `describeReplicaLogDirs` | `GET /api/v1/topics/{name}/replicas/log-dirs` | Replica placement |
+| Feature | AdminClient Method | Suggested Endpoint | Notes |
+|---------|-------------------|-------------------|-------|
+| Share Groups | `describeShareGroups` | `GET /api/v1/share-groups` | Kafka 4.0+ feature, pending Kafka client support |
 
 ---
 

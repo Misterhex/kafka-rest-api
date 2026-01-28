@@ -9,7 +9,7 @@ A REST API for Kafka cluster administration, providing read-only operations to i
 - **Apache Kafka Client** (managed by Spring Boot)
 - **SpringDoc OpenAPI** for API documentation
 - **Micrometer + Prometheus** for metrics
-- **Testcontainers** for integration testing
+- **JaCoCo** for code coverage
 
 ## Current Phase
 
@@ -26,6 +26,8 @@ This API currently supports **read-only operations** for inspecting Kafka cluste
 | GET | `/api/v1/topics` | List all topics |
 | GET | `/api/v1/topics/{name}` | Get topic details |
 | GET | `/api/v1/topics/{name}/partitions` | Get partition info |
+| GET | `/api/v1/topics/{name}/partitions/{partition}/producers` | Get partition producer state |
+| GET | `/api/v1/topics/{name}/replicas/log-dirs` | Get replica log directories |
 
 ### Consumer Groups (`/api/v1/consumer-groups`)
 
@@ -42,6 +44,41 @@ This API currently supports **read-only operations** for inspecting Kafka cluste
 | GET | `/api/v1/cluster` | Get cluster info |
 | GET | `/api/v1/cluster/brokers` | List all brokers |
 | GET | `/api/v1/cluster/brokers/{id}` | Get broker details |
+| GET | `/api/v1/cluster/brokers/{id}/log-dirs` | Get broker log directories |
+| GET | `/api/v1/cluster/reassignments` | List partition reassignments |
+| GET | `/api/v1/cluster/features` | List Kafka features |
+| GET | `/api/v1/cluster/quorum` | Get metadata quorum info (KRaft) |
+
+### ACLs (`/api/v1/acls`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/acls` | List all ACLs |
+
+### Transactions (`/api/v1/transactions`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/transactions` | List all transactions |
+| GET | `/api/v1/transactions/{transactionalId}` | Get transaction details |
+
+### Quotas (`/api/v1/quotas`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/quotas` | List client quotas |
+
+### Delegation Tokens (`/api/v1/tokens`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/tokens` | List delegation tokens |
+
+### Users (`/api/v1/users`)
+
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | `/api/v1/users/credentials` | List user SCRAM credentials |
 
 ### Other Endpoints
 
@@ -72,32 +109,80 @@ src/main/java/com/kafkaadmin/
 ├── topic/                               # Topic feature
 │   ├── Topic.java                      # Domain model
 │   ├── TopicPartitionInfo.java         # Partition model
-│   ├── TopicDto.java                   # List response DTO
-│   ├── TopicDetailDto.java             # Detail response DTO
-│   ├── TopicPartitionInfoDto.java      # Partition DTO
-│   ├── TopicService.java               # Business logic
-│   ├── TopicController.java            # REST controller
-│   └── TopicNotFoundException.java     # Exception
+│   ├── ProducerState.java             # Producer state model
+│   ├── ReplicaLogDirInfo.java         # Replica log dir model
+│   ├── TopicResponse.java             # List response DTO
+│   ├── TopicDetailResponse.java       # Detail response DTO
+│   ├── TopicPartitionInfoResponse.java # Partition DTO
+│   ├── ProducerStateResponse.java     # Producer state DTO
+│   ├── ReplicaLogDirInfoResponse.java # Replica log dir DTO
+│   ├── TopicService.java              # Business logic
+│   ├── TopicController.java           # REST controller
+│   └── TopicNotFoundException.java    # Exception
 ├── consumergroup/                       # Consumer group feature
 │   ├── ConsumerGroup.java              # Domain model
 │   ├── ConsumerGroupMember.java        # Member model
 │   ├── ConsumerGroupOffset.java        # Offset model
-│   ├── ConsumerGroupDto.java           # List response DTO
-│   ├── ConsumerGroupDetailDto.java     # Detail response DTO
-│   ├── ConsumerGroupMemberDto.java     # Member DTO
-│   ├── ConsumerGroupOffsetDto.java     # Offset DTO
+│   ├── ConsumerGroupResponse.java      # List response DTO
+│   ├── ConsumerGroupDetailResponse.java # Detail response DTO
+│   ├── ConsumerGroupMemberResponse.java # Member DTO
+│   ├── ConsumerGroupOffsetResponse.java # Offset DTO
 │   ├── ConsumerGroupService.java       # Business logic
 │   ├── ConsumerGroupController.java    # REST controller
 │   └── ConsumerGroupNotFoundException.java
-└── cluster/                             # Cluster feature
-    ├── Broker.java                     # Broker model
-    ├── ClusterInfo.java                # Cluster info model
-    ├── BrokerDto.java                  # Broker list DTO
-    ├── BrokerDetailDto.java            # Broker detail DTO
-    ├── ClusterInfoDto.java             # Cluster info DTO
-    ├── ClusterService.java             # Business logic
-    ├── ClusterController.java          # REST controller
-    └── BrokerNotFoundException.java    # Exception
+├── cluster/                             # Cluster feature
+│   ├── Broker.java                     # Broker model
+│   ├── ClusterInfo.java                # Cluster info model
+│   ├── LogDirInfo.java                # Log directory model
+│   ├── LogDirPartition.java           # Log dir partition model
+│   ├── PartitionReassignment.java     # Reassignment model
+│   ├── KafkaFeature.java             # Feature model
+│   ├── QuorumInfo.java               # Quorum info model
+│   ├── QuorumReplica.java            # Quorum replica model
+│   ├── BrokerResponse.java            # Broker list DTO
+│   ├── BrokerDetailResponse.java      # Broker detail DTO
+│   ├── ClusterInfoResponse.java       # Cluster info DTO
+│   ├── LogDirInfoResponse.java        # Log dir DTO
+│   ├── LogDirPartitionResponse.java   # Log dir partition DTO
+│   ├── PartitionReassignmentResponse.java # Reassignment DTO
+│   ├── KafkaFeatureResponse.java      # Feature DTO
+│   ├── QuorumInfoResponse.java        # Quorum info DTO
+│   ├── QuorumReplicaResponse.java     # Quorum replica DTO
+│   ├── ClusterService.java            # Business logic
+│   ├── ClusterController.java         # REST controller
+│   └── BrokerNotFoundException.java   # Exception
+├── acl/                                 # ACL feature
+│   ├── Acl.java                       # Domain model
+│   ├── AclResponse.java              # Response DTO
+│   ├── AclService.java               # Business logic
+│   └── AclController.java            # REST controller
+├── transaction/                         # Transaction feature
+│   ├── TransactionListing.java        # Transaction listing model
+│   ├── TransactionDetail.java         # Transaction detail model
+│   ├── TransactionTopicPartition.java # Topic partition model
+│   ├── TransactionListingResponse.java # Listing DTO
+│   ├── TransactionDetailResponse.java # Detail DTO
+│   ├── TransactionTopicPartitionResponse.java # Topic partition DTO
+│   ├── TransactionService.java        # Business logic
+│   ├── TransactionController.java     # REST controller
+│   └── TransactionNotFoundException.java # Exception
+├── quota/                               # Quota feature
+│   ├── ClientQuota.java               # Domain model
+│   ├── ClientQuotaResponse.java       # Response DTO
+│   ├── QuotaService.java             # Business logic
+│   └── QuotaController.java          # REST controller
+├── token/                               # Delegation token feature
+│   ├── DelegationToken.java           # Domain model
+│   ├── DelegationTokenResponse.java   # Response DTO
+│   ├── TokenService.java             # Business logic
+│   └── TokenController.java          # REST controller
+└── user/                                # User SCRAM credential feature
+    ├── UserScramCredential.java       # Domain model
+    ├── ScramCredentialInfo.java       # Credential info model
+    ├── UserScramCredentialResponse.java # Response DTO
+    ├── ScramCredentialInfoResponse.java # Credential info DTO
+    ├── UserService.java               # Business logic
+    └── UserController.java           # REST controller
 ```
 
 ---
@@ -150,8 +235,8 @@ KAFKA_BOOTSTRAP_SERVERS=kafka1:9092,kafka2:9092 ./gradlew bootRun
 # Run unit tests
 ./gradlew test
 
-# Run integration tests (requires Docker for Testcontainers)
-./gradlew integrationTest
+# Generate code coverage report
+./gradlew jacocoTestReport
 ```
 
 ### Run Locally
