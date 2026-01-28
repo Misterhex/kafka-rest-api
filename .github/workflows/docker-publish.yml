@@ -40,5 +40,5 @@ jobs:
           tags: |
             misterhex/kafka-admin-api:latest
             misterhex/kafka-admin-api:${{ github.sha }}
-            ghcr.io/${{ github.repository }}:latest
-            ghcr.io/${{ github.repository }}:${{ github.sha }}
+            ghcr.io/misterhex/kafka-rest-api:latest
+            ghcr.io/misterhex/kafka-rest-api:${{ github.sha }}
