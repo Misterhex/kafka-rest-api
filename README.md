@@ -5,8 +5,8 @@ A REST API for Kafka cluster administration, providing read-only operations to i
 ## Tech Stack
 
 - **Java 21**
-- **Spring Boot 3.2.1**
-- **Apache Kafka Client 4.0.0**
+- **Spring Boot 4.0.1**
+- **Apache Kafka Client** (managed by Spring Boot)
 - **SpringDoc OpenAPI** for API documentation
 - **Micrometer + Prometheus** for metrics
 - **Testcontainers** for integration testing
