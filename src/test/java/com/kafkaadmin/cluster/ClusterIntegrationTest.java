@@ -1,21 +1,34 @@
 package com.kafkaadmin.cluster;
 
 import com.kafkaadmin.BaseIntegrationTest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.web.client.RestClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class ClusterIntegrationTest extends BaseIntegrationTest {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    @LocalServerPort
+    private int port;
+
+    private RestClient restClient;
+
+    @BeforeEach
+    void setUp() {
+        restClient = RestClient.builder()
+                .baseUrl("http://localhost:" + port)
+                .build();
+    }
 
     @Test
     void getClusterInfo_shouldReturnClusterDetails() {
-        ClusterInfoResponse clusterInfo = restTemplate.getForObject(
-                "/api/v1/cluster", ClusterInfoResponse.class);
+        ClusterInfoResponse clusterInfo = restClient.get()
+                .uri("/api/v1/cluster")
+                .retrieve()
+                .body(ClusterInfoResponse.class);
 
         assertThat(clusterInfo).isNotNull();
         assertThat(clusterInfo.clusterId()).isNotEmpty();
@@ -25,8 +38,10 @@ class ClusterIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void listBrokers_shouldReturnBrokers() {
-        BrokerResponse[] brokers = restTemplate.getForObject(
-                "/api/v1/cluster/brokers", BrokerResponse[].class);
+        BrokerResponse[] brokers = restClient.get()
+                .uri("/api/v1/cluster/brokers")
+                .retrieve()
+                .body(BrokerResponse[].class);
 
         assertThat(brokers).isNotNull();
         assertThat(brokers).hasSizeGreaterThan(0);
@@ -37,14 +52,18 @@ class ClusterIntegrationTest extends BaseIntegrationTest {
     @Test
     void getBroker_shouldReturnBrokerDetails() {
         // First get the list of brokers to find a valid ID
-        BrokerResponse[] brokers = restTemplate.getForObject(
-                "/api/v1/cluster/brokers", BrokerResponse[].class);
+        BrokerResponse[] brokers = restClient.get()
+                .uri("/api/v1/cluster/brokers")
+                .retrieve()
+                .body(BrokerResponse[].class);
         assertThat(brokers).isNotEmpty();
 
         int brokerId = brokers[0].id();
 
-        BrokerDetailResponse broker = restTemplate.getForObject(
-                "/api/v1/cluster/brokers/" + brokerId, BrokerDetailResponse.class);
+        BrokerDetailResponse broker = restClient.get()
+                .uri("/api/v1/cluster/brokers/" + brokerId)
+                .retrieve()
+                .body(BrokerDetailResponse.class);
 
         assertThat(broker).isNotNull();
         assertThat(broker.id()).isEqualTo(brokerId);
@@ -53,9 +72,12 @@ class ClusterIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getBroker_whenNotFound_shouldReturn404() {
-        var response = restTemplate.getForEntity(
-                "/api/v1/cluster/brokers/99999", String.class);
+        var response = restClient.get()
+                .uri("/api/v1/cluster/brokers/99999")
+                .exchange((request, resp) -> {
+                    return resp.getStatusCode();
+                });
 
-        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.value()).isEqualTo(404);
     }
 }

@@ -9,8 +9,8 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.web.client.RestClient;
 
 import java.time.Duration;
 import java.util.List;
@@ -21,14 +21,20 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class ConsumerGroupIntegrationTest extends BaseIntegrationTest {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    @LocalServerPort
+    private int port;
+
+    private RestClient restClient;
 
     private static final String TEST_TOPIC = "consumer-group-test-topic";
     private static final String TEST_GROUP = "integration-test-group";
 
     @BeforeEach
     void setUp() throws ExecutionException, InterruptedException {
+        restClient = RestClient.builder()
+                .baseUrl("http://localhost:" + port)
+                .build();
+
         Properties adminProps = new Properties();
         adminProps.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
 
@@ -59,8 +65,10 @@ class ConsumerGroupIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void listConsumerGroups_shouldIncludeTestGroup() {
-        ConsumerGroupResponse[] groups = restTemplate.getForObject(
-                "/api/v1/consumer-groups", ConsumerGroupResponse[].class);
+        ConsumerGroupResponse[] groups = restClient.get()
+                .uri("/api/v1/consumer-groups")
+                .retrieve()
+                .body(ConsumerGroupResponse[].class);
 
         assertThat(groups).isNotNull();
         assertThat(groups).extracting(ConsumerGroupResponse::groupId).contains(TEST_GROUP);
@@ -68,8 +76,10 @@ class ConsumerGroupIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getConsumerGroup_shouldReturnGroupDetails() {
-        ConsumerGroupDetailResponse group = restTemplate.getForObject(
-                "/api/v1/consumer-groups/" + TEST_GROUP, ConsumerGroupDetailResponse.class);
+        ConsumerGroupDetailResponse group = restClient.get()
+                .uri("/api/v1/consumer-groups/" + TEST_GROUP)
+                .retrieve()
+                .body(ConsumerGroupDetailResponse.class);
 
         assertThat(group).isNotNull();
         assertThat(group.groupId()).isEqualTo(TEST_GROUP);
@@ -78,17 +88,22 @@ class ConsumerGroupIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getConsumerGroupOffsets_shouldReturnOffsets() {
-        ConsumerGroupOffsetResponse[] offsets = restTemplate.getForObject(
-                "/api/v1/consumer-groups/" + TEST_GROUP + "/offsets", ConsumerGroupOffsetResponse[].class);
+        ConsumerGroupOffsetResponse[] offsets = restClient.get()
+                .uri("/api/v1/consumer-groups/" + TEST_GROUP + "/offsets")
+                .retrieve()
+                .body(ConsumerGroupOffsetResponse[].class);
 
         assertThat(offsets).isNotNull();
     }
 
     @Test
     void getConsumerGroup_whenNotFound_shouldReturn404() {
-        var response = restTemplate.getForEntity(
-                "/api/v1/consumer-groups/non-existent-group", String.class);
+        var response = restClient.get()
+                .uri("/api/v1/consumer-groups/non-existent-group")
+                .exchange((request, resp) -> {
+                    return resp.getStatusCode();
+                });
 
-        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.value()).isEqualTo(404);
     }
 }

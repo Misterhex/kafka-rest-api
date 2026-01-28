@@ -6,8 +6,8 @@ import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.web.client.RestClient;
 
 import java.util.List;
 import java.util.Properties;
@@ -17,13 +17,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class TopicIntegrationTest extends BaseIntegrationTest {
 
-    @Autowired
-    private TestRestTemplate restTemplate;
+    @LocalServerPort
+    private int port;
+
+    private RestClient restClient;
 
     private static final String TEST_TOPIC = "integration-test-topic";
 
     @BeforeEach
     void setUp() throws ExecutionException, InterruptedException {
+        restClient = RestClient.builder()
+                .baseUrl("http://localhost:" + port)
+                .build();
+
         Properties props = new Properties();
         props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafka.getBootstrapServers());
 
@@ -44,7 +50,10 @@ class TopicIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void listTopics_shouldIncludeTestTopic() {
-        TopicResponse[] topics = restTemplate.getForObject("/api/v1/topics", TopicResponse[].class);
+        TopicResponse[] topics = restClient.get()
+                .uri("/api/v1/topics")
+                .retrieve()
+                .body(TopicResponse[].class);
 
         assertThat(topics).isNotNull();
         assertThat(topics).extracting(TopicResponse::name).contains(TEST_TOPIC);
@@ -52,8 +61,10 @@ class TopicIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getTopic_shouldReturnTopicDetails() {
-        TopicDetailResponse topic = restTemplate.getForObject(
-                "/api/v1/topics/" + TEST_TOPIC, TopicDetailResponse.class);
+        TopicDetailResponse topic = restClient.get()
+                .uri("/api/v1/topics/" + TEST_TOPIC)
+                .retrieve()
+                .body(TopicDetailResponse.class);
 
         assertThat(topic).isNotNull();
         assertThat(topic.name()).isEqualTo(TEST_TOPIC);
@@ -63,8 +74,10 @@ class TopicIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getTopicPartitions_shouldReturnPartitionDetails() {
-        TopicPartitionInfoResponse[] partitions = restTemplate.getForObject(
-                "/api/v1/topics/" + TEST_TOPIC + "/partitions", TopicPartitionInfoResponse[].class);
+        TopicPartitionInfoResponse[] partitions = restClient.get()
+                .uri("/api/v1/topics/" + TEST_TOPIC + "/partitions")
+                .retrieve()
+                .body(TopicPartitionInfoResponse[].class);
 
         assertThat(partitions).isNotNull();
         assertThat(partitions).hasSize(3);
@@ -74,9 +87,12 @@ class TopicIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void getTopic_whenNotFound_shouldReturn404() {
-        var response = restTemplate.getForEntity(
-                "/api/v1/topics/non-existent-topic", String.class);
+        var response = restClient.get()
+                .uri("/api/v1/topics/non-existent-topic")
+                .exchange((request, resp) -> {
+                    return resp.getStatusCode();
+                });
 
-        assertThat(response.getStatusCode().value()).isEqualTo(404);
+        assertThat(response.value()).isEqualTo(404);
     }
 }
