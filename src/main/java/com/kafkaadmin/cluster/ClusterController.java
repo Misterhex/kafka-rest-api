@@ -88,4 +88,77 @@ public class ClusterController {
             @PathVariable int id) {
         return ResponseEntity.ok(clusterService.getBroker(id));
     }
+
+    /**
+     * Describes log directories for a specific broker.
+     *
+     * @param id the broker ID
+     * @return list of log directory information
+     */
+    @GetMapping("/brokers/{id}/log-dirs")
+    @Operation(summary = "Get broker log directories",
+            description = "Returns log directory information for a specific broker")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved log directories"),
+            @ApiResponse(responseCode = "404", description = "Broker not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<List<LogDirInfoResponse>> getBrokerLogDirs(
+            @Parameter(description = "Broker ID", required = true)
+            @PathVariable int id) {
+        return ResponseEntity.ok(clusterService.getBrokerLogDirs(id));
+    }
+
+    /**
+     * Lists ongoing partition reassignments.
+     *
+     * @return list of partition reassignments
+     */
+    @GetMapping("/reassignments")
+    @Operation(summary = "List partition reassignments",
+            description = "Returns a list of ongoing partition reassignments in the cluster")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved reassignments"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<List<PartitionReassignmentResponse>> listPartitionReassignments() {
+        return ResponseEntity.ok(clusterService.listPartitionReassignments());
+    }
+
+    /**
+     * Describes Kafka features.
+     *
+     * @return list of Kafka features
+     */
+    @GetMapping("/features")
+    @Operation(summary = "List Kafka features",
+            description = "Returns a list of Kafka features and their version information")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved features"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<List<KafkaFeatureResponse>> describeFeatures() {
+        return ResponseEntity.ok(clusterService.describeFeatures());
+    }
+
+    /**
+     * Describes the metadata quorum (KRaft mode).
+     *
+     * @return quorum information
+     */
+    @GetMapping("/quorum")
+    @Operation(summary = "Get metadata quorum info",
+            description = "Returns metadata quorum information (only available in KRaft mode)")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved quorum info"),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<QuorumInfoResponse> describeMetadataQuorum() {
+        return ResponseEntity.ok(clusterService.describeMetadataQuorum());
+    }
 }

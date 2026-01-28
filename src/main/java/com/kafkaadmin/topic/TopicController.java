@@ -91,4 +91,51 @@ public class TopicController {
             @PathVariable String name) {
         return ResponseEntity.ok(topicService.getTopicPartitions(name));
     }
+
+    /**
+     * Describes producers on a specific topic partition.
+     *
+     * @param name the topic name
+     * @param partition the partition number
+     * @return list of producer states sorted by producer ID
+     */
+    @GetMapping("/{name}/partitions/{partition}/producers")
+    @Operation(summary = "Get partition producers",
+            description = "Returns active producer information for a specific topic partition")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved producers"),
+            @ApiResponse(responseCode = "404", description = "Topic not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<List<ProducerStateResponse>> describeProducers(
+            @Parameter(description = "Topic name", required = true)
+            @PathVariable String name,
+            @Parameter(description = "Partition number", required = true)
+            @PathVariable int partition) {
+        return ResponseEntity.ok(topicService.describeProducers(name, partition));
+    }
+
+    /**
+     * Describes replica log directories for a topic.
+     *
+     * @param name the topic name
+     * @return list of replica log directory information
+     */
+    @GetMapping("/{name}/replicas/log-dirs")
+    @Operation(summary = "Get replica log directories",
+            description = "Returns log directory information for all replicas of a topic")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successfully retrieved replica log directories"),
+            @ApiResponse(responseCode = "404", description = "Topic not found",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal server error",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
+    })
+    public ResponseEntity<List<ReplicaLogDirInfoResponse>> describeReplicaLogDirs(
+            @Parameter(description = "Topic name", required = true)
+            @PathVariable String name) {
+        return ResponseEntity.ok(topicService.describeReplicaLogDirs(name));
+    }
 }

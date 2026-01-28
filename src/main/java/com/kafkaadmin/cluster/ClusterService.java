@@ -58,4 +58,53 @@ public class ClusterService {
         Map<String, String> configs = kafkaAdminPort.getBrokerConfigs(brokerId);
         return BrokerDetailResponse.from(broker, configs);
     }
+
+    /**
+     * Describes log directories for a specific broker.
+     *
+     * @param brokerId the broker ID
+     * @return list of log directory info DTOs sorted by path
+     * @throws BrokerNotFoundException if the broker does not exist
+     */
+    public List<LogDirInfoResponse> getBrokerLogDirs(int brokerId) {
+        return kafkaAdminPort.describeLogDirs(brokerId).stream()
+                .map(LogDirInfoResponse::from)
+                .sorted(Comparator.comparing(LogDirInfoResponse::path))
+                .toList();
+    }
+
+    /**
+     * Lists ongoing partition reassignments.
+     *
+     * @return list of partition reassignment DTOs sorted by topic and partition
+     */
+    public List<PartitionReassignmentResponse> listPartitionReassignments() {
+        return kafkaAdminPort.listPartitionReassignments().stream()
+                .map(PartitionReassignmentResponse::from)
+                .sorted(Comparator.comparing(PartitionReassignmentResponse::topic)
+                        .thenComparingInt(PartitionReassignmentResponse::partition))
+                .toList();
+    }
+
+    /**
+     * Describes Kafka features.
+     *
+     * @return list of feature DTOs sorted by name
+     */
+    public List<KafkaFeatureResponse> describeFeatures() {
+        return kafkaAdminPort.describeFeatures().stream()
+                .map(KafkaFeatureResponse::from)
+                .sorted(Comparator.comparing(KafkaFeatureResponse::name))
+                .toList();
+    }
+
+    /**
+     * Describes the metadata quorum (KRaft mode).
+     *
+     * @return quorum info DTO
+     */
+    public QuorumInfoResponse describeMetadataQuorum() {
+        QuorumInfo quorumInfo = kafkaAdminPort.describeMetadataQuorum();
+        return QuorumInfoResponse.from(quorumInfo);
+    }
 }

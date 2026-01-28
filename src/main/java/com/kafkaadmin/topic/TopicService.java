@@ -61,4 +61,34 @@ public class TopicService {
                 .sorted(Comparator.comparingInt(TopicPartitionInfoResponse::partition))
                 .toList();
     }
+
+    /**
+     * Describes producers on a specific topic partition.
+     *
+     * @param topicName the topic name
+     * @param partition the partition number
+     * @return list of producer state DTOs sorted by producer ID
+     * @throws TopicNotFoundException if the topic does not exist
+     */
+    public List<ProducerStateResponse> describeProducers(String topicName, int partition) {
+        return kafkaAdminPort.describeProducers(topicName, partition).stream()
+                .map(ProducerStateResponse::from)
+                .sorted(Comparator.comparingLong(ProducerStateResponse::producerId))
+                .toList();
+    }
+
+    /**
+     * Describes replica log directories for a topic.
+     *
+     * @param topicName the topic name
+     * @return list of replica log dir info DTOs sorted by broker ID and partition
+     * @throws TopicNotFoundException if the topic does not exist
+     */
+    public List<ReplicaLogDirInfoResponse> describeReplicaLogDirs(String topicName) {
+        return kafkaAdminPort.describeReplicaLogDirs(topicName).stream()
+                .map(ReplicaLogDirInfoResponse::from)
+                .sorted(Comparator.comparingInt(ReplicaLogDirInfoResponse::brokerId)
+                        .thenComparingInt(ReplicaLogDirInfoResponse::partition))
+                .toList();
+    }
 }
